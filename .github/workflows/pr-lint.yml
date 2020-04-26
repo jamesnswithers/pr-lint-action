@@ -11,5 +11,3 @@ jobs:
     - uses: seferov/pr-lint-action@master
       with:
         title-regex: '^(\[[a-z ]*\]|Bump) '
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
