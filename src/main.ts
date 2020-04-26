@@ -16,7 +16,7 @@ async function run() {
 
       const github_token = core.getInput('GITHUB_TOKEN');
 
-      const pull_request_number = context.payload.pull_request.number;
+      const pull_request_number = context!.payload!.pull_request!.number;
       const octokit = new github.GitHub(github_token);
       const message = "Pull Request title validation Failed";
       const new_comment = octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: message }));
