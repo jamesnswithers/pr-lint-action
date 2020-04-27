@@ -5,10 +5,18 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
 inputs:
-  title-regex:
-    description: 'Title regex to match'
+  title-regexs:
+    description: 'Multiline string of regexs to match to the pull request title'
     required: true
-    default: '^\[PROJECT-\d*\]\ '
+    default: '^\[PROJECT-\d*\]\'
+  title-regex-flags:
+    description: 'Regex flags to be used when matching'
+    required: false
+    default: 'g'
+  failure-message:
+    description: 'Failure message to be displayed as a comment on the pull request'
+    required: false
+    default: 'Pull Request Title Validation Failed'
 branding:
   icon: 'edit-3'
   color: 'blue'
