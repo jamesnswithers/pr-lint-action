@@ -8,9 +8,9 @@ async function run() {
       titleRegexs = core.getInput('title-regexs', { required: true }),
       titleRegexFlags = core.getInput('title-regex-flags') || 'g',
       failureMessage = core.getInput('failure-message') || 'Pull Request Title Validation Failed',
-      title = context!.payload!.pull_request!.title,
-      matchesAny = false;
+      title = context!.payload!.pull_request!.title;
 
+    let matchesAny: boolean = false;
     titleRegexs.split(/\r?\n/).forEach(function (titleRegex) {
       core.info(`Checking "${titleRegex}" with "${titleRegexFlags}" flags against the PR title: "${title}"`);
 
@@ -27,7 +27,6 @@ async function run() {
 
       const pull_request_number = context!.payload!.pull_request!.number;
       const octokit = new github.GitHub(github_token);
-      const message = "Pull Request title validation Failed";
       const new_comment = octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: failureMessage }));
     }
   } catch (error) {
