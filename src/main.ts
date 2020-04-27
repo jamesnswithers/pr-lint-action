@@ -14,7 +14,7 @@ async function run() {
     titleRegexs.split(/\r?\n/).forEach(function (titleRegex) {
       core.info(`Checking "${titleRegex}" with "${titleRegexFlags}" flags against the PR title: "${title}"`);
 
-      if (!title.match(new RegExp(titleRegex, titleRegexFlags))) {
+      if (title.match(new RegExp(titleRegex, titleRegexFlags))) {
         matchesAny = true
         core.info(`Match found for PR title "${title}" using regex "${titleRegex}".`);
       }
