@@ -1,25 +1,37 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import { getRequiredEnvironmentVariable } from "./utils";
 
 async function run() {
   try {
     const context = github.context;
     const
-      titleRegex = core.getInput('title-regex', {required: true}),
-      titleRegexFlags = core.getInput('title-regex-flags') || 'g',
+      titleRegexs = getRequiredEnvironmentVariable('title-regexs'),
+      titleRegexFlags = getRequiredEnvironmentVariable('title-regex-flags'),
+      failureMessage = getRequiredEnvironmentVariable('failure-message'),
       title = context!.payload!.pull_request!.title;
 
-    core.info(`Checking "${titleRegex}" with "${titleRegexFlags}" flags against the PR title: "${title}"`);
+    let matchesAny: boolean = false;
+    titleRegexs.split(/[\r\n]+/).forEach(function (titleRegex) {
+      if (titleRegex === "") {
+        return
+      }
+      core.info(`Checking "${titleRegex}" with "${titleRegexFlags}" flags against the PR title: "${title}"`);
 
-    if (!title.match(new RegExp(titleRegex, titleRegexFlags))) {
-      core.setFailed(`Please fix your PR title to match "${titleRegex}" with "${titleRegexFlags}" flags, and re-trigger the check by pushing a new commit.`);
+      if (title.match(new RegExp(titleRegex, titleRegexFlags))) {
+        matchesAny = true
+        core.info(`Match found for PR title "${title}" using regex "${titleRegex}".`);
+      }
+    });
 
-      const github_token = core.getInput('GITHUB_TOKEN');
+    if (!matchesAny) {
+      core.setFailed(failureMessage);
+
+      const github_token = getRequiredEnvironmentVariable('GITHUB_TOKEN');
 
       const pull_request_number = context!.payload!.pull_request!.number;
       const octokit = new github.GitHub(github_token);
-      const message = "Pull Request title validation Failed";
-      const new_comment = octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: message }));
+      const new_comment = octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: failureMessage }));
     }
   } catch (error) {
     core.setFailed(error.message);

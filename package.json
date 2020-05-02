@@ -1,7 +1,7 @@
 {
-  "name": "pr-lint-action",
-  "version": "1.0.4",
-  "description": "PR Lint for Github Actions",
+  "name": "pull-request-validator-action",
+  "version": "1.0.0",
+  "description": "Pull Request Validator GitHub Action",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -9,26 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seferov/pr-lint-action.git"
+    "url": "git+https://github.com/hd-it-development/pull-request-validator-action.git"
   },
   "keywords": [
     "actions",
-    "pr",
-    "lint"
+    "pull",
+    "validate"
   ],
-  "author": "Farhad Safarov",
-  "license": "MPL-2.0",
-  "bugs": {
-    "url": "https://github.com/seferov/pr-lint-action/issues"
-  },
-  "homepage": "https://github.com/seferov/pr-lint-action#readme",
+  "author": "James Withers",
+  "homepage": "https://github.com/hd-it-development/pull-request-validator-action#readme",
   "dependencies": {
-    "@actions/core": "^1.2.3",
-    "@actions/github": "^1.1.0"
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^2.1.1"
   },
   "devDependencies": {
-    "@types/node": "^12.12.5",
-    "prettier": "^1.19.1",
+    "@types/node": "^13.13.4",
+    "prettier": "^2.0.5",
     "typescript": "^3.8.3"
   }
 }

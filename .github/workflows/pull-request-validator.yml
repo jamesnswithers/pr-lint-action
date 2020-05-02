@@ -1,0 +1,37 @@
+name: Pull Request Validator
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+jobs:
+  pull-request-validator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - uses: actions/checkout@v2.1.0
+        with:
+          repository: hd-it-development/pull-request-validator-action
+          ref: refs/heads/master
+          token: ${{ secrets.GitHubPat }} # `GitHub_PAT` is a secret that contains your PAT to clone that private repo
+      - run: npm install
+      - run: node_modules/typescript/bin/tsc --project tsconfig.json
+      - run: node lib/main.js
+        env:
+          title-regexs: |
+            ^(OCTANE-US\d*).*
+            ^(OCTANE-QS\d*).*
+            ^(OCTANE-DE\d*).*
+            ^Revert\s"(OCTANE-US\d*).*"
+            ^Revert\s"(OCTANE-QS\d*).*"
+            ^Revert\s"(OCTANE-DE\d*).*"
+          failure-message: |2
+            Pull Request Validation Failed. The pull request title should follow the below case-sensitive patterns
+            * `OCTANE-US/QS/DE12345 An optional small summary title`
+            * `Revert "OCTANE-US/QS/DE12345 An optional small summary title"`
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          title-regex-flags: 'g'
