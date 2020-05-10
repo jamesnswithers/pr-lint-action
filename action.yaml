@@ -2,7 +2,7 @@ name: Pull Request Validator'
 description: 'Pull Request Validator for testing'
 author: 'jamesnswithers'
 runs:
-  using: 'node12'
+  using: 'docker'
   main: 'lib/main.js'
 branding:
   icon: 'edit-3'

@@ -1,4 +1,4 @@
-const enum States {
+export enum States {
   success = "success",
   error = "error",
   failure = "failure",

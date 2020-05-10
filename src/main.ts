@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as github from '@actions/github';
+import * as github from 'github-script';
 import { getRequiredEnvironmentVariable } from "./utils";
 import { States } from "./statusStates";
 
@@ -10,7 +10,8 @@ async function run() {
       titleRegexs = getRequiredEnvironmentVariable('title-regexs'),
       titleRegexFlags = getRequiredEnvironmentVariable('title-regex-flags'),
       failureMessage = getRequiredEnvironmentVariable('failure-message'),
-      title = context!.payload!.pull_request!.title;
+      title = context!.payload!.pull_request!.title,
+      sha = context!.payload!.pull_request!.sha;
 
     let matchesAny: boolean = false;
     titleRegexs.split(/[\r\n]+/).forEach(function (titleRegex) {
@@ -28,9 +29,9 @@ async function run() {
     const github_token = getRequiredEnvironmentVariable('GITHUB_TOKEN');
     const pull_request_number = context!.payload!.pull_request!.number;
     const octokit = new github.GitHub(github_token);
-    core.info(context.repo);
-    core.info(context.payload);
-    core.info(context.payload.pull_request);
+    core.info(JSON.stringify(context.repo));
+    core.info(JSON.stringify(context.payload));
+    core.info(JSON.stringify(context.payload.pull_request));
     let titleCheckState = States.success
     if (!matchesAny) {
       titleCheckState = States.failure
@@ -38,12 +39,15 @@ async function run() {
     }
 
     octokit.repos.createStatus(
-      Object.assign(Object.assign(Object.assign({}, context.repo),
-      {
-        state: titleCheckState,
-        context: 'pull-request-utility/title/validation'
-      }
-    ));
+      Object.assign(
+        Object.assign({}, context.repo),
+        {
+          sha: sha,
+          state: titleCheckState,
+          context: 'pull-request-utility/title/validation'
+        }
+      )
+    );
   } catch (error) {
     core.setFailed(error.message);
   }
