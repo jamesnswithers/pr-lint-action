@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { getRequiredEnvironmentVariable } from "./utils";
+import { States } from "./statusStates";
 
 async function run() {
   try {
@@ -24,15 +25,25 @@ async function run() {
       }
     });
 
+    const github_token = getRequiredEnvironmentVariable('GITHUB_TOKEN');
+    const pull_request_number = context!.payload!.pull_request!.number;
+    const octokit = new github.GitHub(github_token);
+    core.info(context.repo);
+    core.info(context.payload);
+    core.info(context.payload.pull_request);
+    let titleCheckState = States.success
     if (!matchesAny) {
-      core.setFailed(failureMessage);
-
-      const github_token = getRequiredEnvironmentVariable('GITHUB_TOKEN');
-
-      const pull_request_number = context!.payload!.pull_request!.number;
-      const octokit = new github.GitHub(github_token);
-      const new_comment = octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: failureMessage }));
+      titleCheckState = States.failure
+      octokit.issues.createComment(Object.assign(Object.assign({}, context.repo), { issue_number: pull_request_number, body: failureMessage }));
     }
+
+    octokit.repos.createStatus(
+      Object.assign(Object.assign(Object.assign({}, context.repo),
+      {
+        state: titleCheckState,
+        context: 'pull-request-utility/title/validation'
+      }
+    ));
   } catch (error) {
     core.setFailed(error.message);
   }

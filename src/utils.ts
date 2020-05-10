@@ -1,4 +1,4 @@
-import * as core from "@actions/core";
+import * as core from '@actions/core';
 
 export function getRequiredEnvironmentVariable(name: string): string {
   let value = process.env[name];
