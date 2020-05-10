@@ -3,7 +3,7 @@ description: 'Pull Request Validator for testing'
 author: 'jamesnswithers'
 runs:
   using: 'docker'
-  main: 'lib/main.js'
+  image: 'Dockerfile'
 branding:
   icon: 'edit-3'
   color: 'blue'
