@@ -1,15 +1,14 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { getRequiredEnvironmentVariable } from "./utils";
 import { States } from "./statusStates";
 
 async function run() {
   try {
     const context = github.context;
     const
-      titleRegexs = getRequiredEnvironmentVariable('title-regexs'),
-      titleRegexFlags = getRequiredEnvironmentVariable('title-regex-flags'),
-      failureMessage = getRequiredEnvironmentVariable('failure-message'),
+      titleRegexs = core.getInput('title-regexs', {required: true}),
+      titleRegexFlags = core.getInput('title-regex-flags') || 'g',
+      failureMessage = core.getInput('failure-message#''', {required: true}),
       title = context!.payload!.pull_request!.title,
       sha = context!.payload!.pull_request!.sha;
 
