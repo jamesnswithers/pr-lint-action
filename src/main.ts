@@ -8,7 +8,7 @@ async function run() {
     const
       titleRegexs = core.getInput('title-regexs', {required: true}),
       titleRegexFlags = core.getInput('title-regex-flags') || 'g',
-      failureMessage = core.getInput('failure-message#''', {required: true}),
+      failureMessage = core.getInput('failure-message', {required: true}),
       title = context!.payload!.pull_request!.title,
       sha = context!.payload!.pull_request!.sha;
 
@@ -25,7 +25,7 @@ async function run() {
       }
     });
 
-    const github_token = getRequiredEnvironmentVariable('GITHUB_TOKEN');
+    const github_token = core.getInput('GITHUB_TOKEN');
     const pull_request_number = context!.payload!.pull_request!.number;
     const octokit = new github.GitHub(github_token);
     core.info(JSON.stringify(context.repo));
