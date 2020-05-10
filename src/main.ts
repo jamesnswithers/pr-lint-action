@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as github from 'github-script';
+import * as github from '@actions/github';
 import { getRequiredEnvironmentVariable } from "./utils";
 import { States } from "./statusStates";
 
