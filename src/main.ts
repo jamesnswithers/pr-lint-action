@@ -25,7 +25,7 @@ async function run() {
       }
     });
 
-    const github_token = core.getInput('GITHUB_TOKEN');
+    const github_token = core.getInput('github-token');
     const pull_request_number = context!.payload!.pull_request!.number;
     const octokit = new github.GitHub(github_token);
     core.info(JSON.stringify(context.repo));
