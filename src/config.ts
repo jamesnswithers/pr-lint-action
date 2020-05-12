@@ -1,6 +1,6 @@
-const yaml = require('js-yaml');
-const path = require('path');
 import * as github from '@actions/github';
+import * as yaml from require('js-yaml');
+import * as path from require('path');
 
 const CONFIG_PATH = '.github';
 const CONFIG_FILE = 'pull-request-util.yaml';
@@ -49,5 +49,5 @@ async function loadYaml(octokit, params) {
 export async function getConfig(octokit) {
   const filePath = path.posix.join(CONFIG_PATH, CONFIG_FILE);
   const params = Object.assign(Object.assign({}, github.context.repo), { path: filePath })
-  const config = await loadYaml(octokit, params);
+  return await loadYaml(octokit, params);
 }
