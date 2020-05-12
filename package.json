@@ -20,7 +20,8 @@
   "homepage": "https://github.com/hd-it-development/pull-request-validator-action#readme",
   "dependencies": {
     "@actions/core": "^1.2.4",
-    "@actions/github": "^2.2.0"
+    "@actions/github": "^2.2.0",
+    "js-yaml": "^3.13.1"
   },
   "devDependencies": {
     "@types/node": "^13.13.4",
