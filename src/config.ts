@@ -26,7 +26,7 @@ async function loadYaml(octokit, params) {
     const response = await octokit.repos.getContents(params);
     return parseConfig(response.data.content);
   } catch (e) {
-    if (e.code === 404) {
+    if (e.status === 404) {
       return null;
     }
 
