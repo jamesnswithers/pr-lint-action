@@ -1,8 +1,14 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { States } from "./statusStates";
+import { getConfig } from "./config";
 
 async function run() {
+  const github_token = core.getInput('github-token');
+  const octokit = new github.GitHub(github_token);
+  const config = getConfig(octokit);
+  core.info(config);
+  /*
   try {
     const context = github.context;
     const
@@ -47,6 +53,7 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+  */
 }
 
 run();
