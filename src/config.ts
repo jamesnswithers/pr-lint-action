@@ -1,6 +1,6 @@
 import * as github from '@actions/github';
-import * as yaml from require('js-yaml');
-import * as path from require('path');
+import * as yaml from 'js-yaml';
+import * as path from 'path';
 
 const CONFIG_PATH = '.github';
 const CONFIG_FILE = 'pull-request-util.yaml';
