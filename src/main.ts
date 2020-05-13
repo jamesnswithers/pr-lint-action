@@ -8,6 +8,7 @@ async function run() {
   const octokit = new github.GitHub(github_token);
   const config = await getConfig(octokit);
   core.info('parsed config: ');
+  core.info(config.name);
   core.info(JSON.stringify(config));
   /*
   try {
