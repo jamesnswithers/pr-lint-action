@@ -5,16 +5,6 @@ import * as yaml from 'js-yaml';
 const CONFIG_FILE = '.github/pull-request-utility.yaml';
 
 /**
- * Decodes and parses a YAML config file
- *
- * @param {string} content Base64 encoded YAML contents
- * @returns {object} The parsed YAML file as native object
- */
-function parseConfig(content) {
-  return yaml.safeLoad(Buffer.from(content, 'base64').toString()) || {};
-}
-
-/**
  * Loads a file from GitHub
  *
  * @param {octokit} context An Octokit context
@@ -27,8 +17,11 @@ async function loadYaml(octokit, params) {
     core.info(`Retrieving config from ${CONFIG_FILE}`);
     core.info(`Params used ${JSON.stringify(params)}`);
     const response = await octokit.repos.getContents(params);
-    core.info(`content: ${response.data.content}`);
-    return parseConfig(response.data.content);
+
+    if (typeof response.data.content !== 'string') {
+      return
+    }
+    return yaml.safeLoad(Buffer.from(response.data.content, 'base64').toString()) || {}
   } catch (e) {
     if (e.status === 404) {
       return null;
