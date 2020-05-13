@@ -27,7 +27,6 @@ async function loadYaml(octokit, params) {
     core.info(`Retrieving config from ${CONFIG_FILE}`);
     core.info(`Params used ${JSON.stringify(params)}`);
     const response = await octokit.repos.getContents(params);
-    core.info(response);
     core.info(`content: ${response.data.content}`);
     return parseConfig(response.data.content);
   } catch (e) {
