@@ -6,7 +6,7 @@ import { getConfig } from "./config";
 async function run() {
   const github_token = core.getInput('github-token');
   const octokit = new github.GitHub(github_token);
-  const config = getConfig(octokit);
+  const config = await getConfig(octokit);
   core.info('parsed config: ');
   core.info(JSON.stringify(config));
   /*
