@@ -1,7 +1,7 @@
 import * as github from '@actions/github';
 import * as yaml from 'js-yaml';
 
-const CONFIG_FILE = '.github/pull-request-util.yaml';
+const CONFIG_FILE = '.github/pull-request-utility.yaml';
 
 /**
  * Decodes and parses a YAML config file
