@@ -1,4 +1,5 @@
 import * as github from '@actions/github';
+import * as core from '@actions/core';
 import * as yaml from 'js-yaml';
 
 const CONFIG_FILE = '.github/pull-request-utility.yaml';
@@ -23,7 +24,10 @@ function parseConfig(content) {
  */
 async function loadYaml(octokit, params) {
   try {
+    core.info(`Retrieving config from ${CONFIG_FILE}`);
+    core.info(`Params used ${JSON.stringify(params)}`);
     const response = await octokit.repos.getContents(params);
+    core.info(response);
     return parseConfig(response.data.content);
   } catch (e) {
     if (e.status === 404) {
