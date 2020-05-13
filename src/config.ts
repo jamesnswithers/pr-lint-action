@@ -21,6 +21,9 @@ async function loadYaml(octokit, params) {
     if (typeof response.data.content !== 'string') {
       return
     }
+    core.info(response.data.content);
+    core.info(Buffer.from(response.data.content, 'base64').toString());
+    core.info(yaml.safeLoad(Buffer.from(response.data.content, 'base64').toString()));
     return yaml.safeLoad(Buffer.from(response.data.content, 'base64').toString()) || {}
   } catch (e) {
     if (e.status === 404) {
