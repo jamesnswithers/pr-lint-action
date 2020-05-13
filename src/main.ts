@@ -7,7 +7,7 @@ async function run() {
   const github_token = core.getInput('github-token');
   const octokit = new github.GitHub(github_token);
   const config = getConfig(octokit);
-  core.info(JSON.stringify(config));
+  //core.info(JSON.stringify(config));
   /*
   try {
     const context = github.context;
