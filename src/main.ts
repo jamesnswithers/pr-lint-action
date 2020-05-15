@@ -30,6 +30,17 @@ async function run() {
         }
       )
     );
+    if (!titleCheckState) {
+      gitHubClient.issues.createComment(
+        Object.assign(
+          Object.assign({}, github.context.repo),
+          {
+            issue_number: context.payload.pull_request.number,
+            body: _.get(config, 'checks.title-validator.failure-message')
+          }
+        )
+      );
+    }
   }
   /*
   try {
