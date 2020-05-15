@@ -13,12 +13,12 @@ async function run() {
   const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha
   core.info('SHA of PR: ' + pullRequestSha);
 
-  const titleValidationConfig = _.find(config , function(o) { return o.checks.check == 'title-validator' });
+  const titleValidationConfig = _.hasIn(config , 'checks.title-validator');
   core.info('titleValidationConfig: ' + titleValidationConfig);
-  if (!_.isEmpty(titleValidationConfig)) {
+  if (titleValidationConfig) {
     const pullRequestTitle = github!.context!.payload!.pull_request!.title;
     core.info('pullRequestTitle: ' + pullRequestTitle);
-    const titleCheckState = await isTitleValid(pullRequestTitle, titleValidationConfig.matches);
+    const titleCheckState = await isTitleValid(pullRequestTitle, config.checks.title-validator.matches);
     core.info('titleCheckState: ' + titleCheckState);
     gitHubClient.repos.createStatus(
       Object.assign(
