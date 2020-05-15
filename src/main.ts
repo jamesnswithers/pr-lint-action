@@ -18,7 +18,7 @@ async function run() {
   if (titleValidationConfig) {
     const pullRequestTitle = github!.context!.payload!.pull_request!.title;
     core.info('pullRequestTitle: ' + pullRequestTitle);
-    const titleCheckState = await isTitleValid(pullRequestTitle, config.checks.title-validator.matches);
+    const titleCheckState = await isTitleValid(pullRequestTitle, _.get(config, 'checks.title-validator.matches'));
     core.info('titleCheckState: ' + titleCheckState);
     gitHubClient.repos.createStatus(
       Object.assign(
