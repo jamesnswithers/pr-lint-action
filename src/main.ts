@@ -35,7 +35,7 @@ async function run() {
         Object.assign(
           Object.assign({}, github.context.repo),
           {
-            issue_number: github.context.payload.pull_request.number,
+            issue_number: github!.context!.payload!.pull_request!.number,
             body: _.get(config, 'checks.title-validator.failure-message')
           }
         )
