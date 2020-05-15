@@ -9,12 +9,17 @@ async function run() {
   const github_token = core.getInput('github-token');
   const gitHubClient = new github.GitHub(github_token);
   const config = await getConfig(gitHubClient);
+
   const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha
+  core.info('SHA of PR: ' + pullRequestSha);
 
   const titleValidationConfig = _.find(config , function(o) { return o.checks.check == 'title-validator' });
-  if (titleValidationConfig) {
+  core.info('titleValidationConfig: ' + titleValidationConfig);
+  if (!_.isEmpty(titleValidationConfig)) {
     const pullRequestTitle = github!.context!.payload!.pull_request!.title;
+    core.info('pullRequestTitle: ' + pullRequestTitle);
     const titleCheckState = await isTitleValid(pullRequestTitle, titleValidationConfig.matches);
+    core.info('titleCheckState: ' + titleCheckState);
     gitHubClient.repos.createStatus(
       Object.assign(
         Object.assign({}, github.context.repo),
