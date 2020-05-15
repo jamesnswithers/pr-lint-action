@@ -14,6 +14,7 @@ const CONFIG_FILE = '.github/pull-request-utility.yaml';
  * @async
  */
 async function loadYaml(gitHubClient, params) {
+  core.info('Entered loadYaml');
   try {
     const response = await gitHubClient.repos.getContents(params);
 
@@ -41,6 +42,10 @@ async function loadYaml(gitHubClient, params) {
  * @async
  */
 export async function getConfig(gitHubClient) {
+  core.info('Entered getConfig');
   const params = Object.assign(Object.assign({}, github.context.repo), { path: CONFIG_FILE })
-  return await validateSchema(loadYaml(gitHubClient, params));
+  core.info('params: ' + params);
+  const yamlConfig = await loadYaml(gitHubClient, params);
+  core.info('yamlConfig: ' + yamlConfig);
+  return validateSchema(yamlConfig);
 }
