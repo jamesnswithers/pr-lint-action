@@ -1,15 +1,31 @@
+import * as _ from 'lodash';
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { States } from "./statusStates";
 import { getConfig } from "./config";
+import { States } from "./statusStates";
+import { isTitleValid } from "./validateTitle";
 
 async function run() {
   const github_token = core.getInput('github-token');
-  const octokit = new github.GitHub(github_token);
-  const config = await getConfig(octokit);
-  core.info('parsed config: ');
-  core.info(config.name);
-  core.info(JSON.stringify(config));
+  const gitHubClient = new github.GitHub(github_token);
+  const config = await getConfig(gitHubClient);
+  const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha
+
+  const titleValidationConfig = _.find(config , function(o) { return o.checks.check == 'title-validator' });
+  if (titleValidationConfig) {
+    const pullRequestTitle = github!.context!.payload!.pull_request!.title;
+    const titleCheckState = await isTitleValid(pullRequestTitle, titleValidationConfig.matches);
+    gitHubClient.repos.createStatus(
+      Object.assign(
+        Object.assign({}, github.context.repo),
+        {
+          sha: pullRequestSha,
+          state: titleCheckState ? States.success : States.failure,
+          context: 'pull-request-utility/title/validation'
+        }
+      )
+    );
+  }
   /*
   try {
     const context = github.context;
