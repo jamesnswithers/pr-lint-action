@@ -4,6 +4,10 @@ author: 'jamesnswithers'
 runs:
   using: 'docker'
   image: 'Dockerfile'
+inputs:
+  github-token:
+    description: Token for the GitHub API.
+    required: true
 branding:
   icon: 'edit-3'
   color: 'blue'
