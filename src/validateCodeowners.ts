@@ -45,8 +45,10 @@ async function listPullRequestFiles(gitHubClient) {
         }
       )
     );
-    core.info(JSON.stringify(listedFiles));
-    _.concat(pullRequestFiles, _.map(listedFiles.data, 'filename'));
+    //core.info(JSON.stringify(listedFiles));
+    core.info(JSON.stringify(listedFiles.data));
+    core.info(JSON.stringify(_.map(listedFiles.data, 'filename')));
+    pullRequestFiles = _.concat(pullRequestFiles, _.map(listedFiles.data, 'filename'));
     page++;
   } while (page < numberOfPages)
   core.info(JSON.stringify(pullRequestFiles));
