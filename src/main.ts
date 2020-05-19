@@ -12,7 +12,7 @@ async function run() {
   const config = await getConfig(gitHubClient);
   const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha;
 
-  core.info(JSON.stringify(github));
+  //core.info(JSON.stringify(github));
 
   if (_.hasIn(config , 'checks.title-validator')) {
     const pullRequestTitle = github!.context!.payload!.pull_request!.title;
