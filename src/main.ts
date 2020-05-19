@@ -12,6 +12,11 @@ async function run() {
   const config = await getConfig(gitHubClient);
   const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha;
 
+  core.info(JSON.stringify(github));
+  core.info(JSON.stringify(github!.context));
+  core.info(JSON.stringify(github!.context!.payload));
+  core.info(JSON.stringify(github!.context!.payload!.pull_request));
+
   if (_.hasIn(config , 'checks.title-validator')) {
     const pullRequestTitle = github!.context!.payload!.pull_request!.title;
     const titleCheckState = await isTitleValid(pullRequestTitle, _.get(config, 'checks.title-validator.matches'));

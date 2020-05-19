@@ -18,7 +18,7 @@ async function createStatus(gitHubClient, status) {
       Object.assign(
         Object.assign({}, github.context.repo),
         {
-          sha: pullRequestSha,
+          sha: github!.context!.payload!.pull_request!.head!.sha,
           state: status,
           context: STATUS_NAME
         }
@@ -32,7 +32,7 @@ async function listPullRequestFiles(gitHubClient) {
   let keepSearching = true;
   let page = 0;
   do {
-    const listedFiles = gitHubClient.pulls.listFiles({
+    const listedFiles = gitHubClient.pulls.listFiles(
       Object.assign(
         Object.assign({}, github.context.repo),
         {
@@ -40,9 +40,8 @@ async function listPullRequestFiles(gitHubClient) {
           page: page
         }
       )
-    });
+    );
     page++;
-    if ()
   } while (keepSearching)
 }
 
@@ -55,9 +54,11 @@ async function listPullRequestFiles(gitHubClient) {
  */
 export async function validateCodeowners(gitHubClient, githubToken) {
   const codeOwnersApi = new Codeowner(github.context.repo, {type: 'token', token: githubToken});
-  if (!content) {
+  /*
+  if (!codeOwnersApi) {
     createStatus(gitHubClient, States.failure);
     return;
   }
   let isCodeownerValidated = false;
+  */
 }
