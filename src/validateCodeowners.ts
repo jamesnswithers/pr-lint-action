@@ -1,9 +1,11 @@
-import * as github from '@actions/github';
- import {Codeowner} from 'codeowners-api';
-import { States } from "./statusStates";
 import * as _ from 'lodash';
+import * as github from '@actions/github';
+import * as core from '@actions/core';
+import {Codeowner} from 'codeowners-api';
+import { States } from "./statusStates";
 
 const STATUS_NAME = 'pull-request-utility/codeowners/enforce';
+const PAGE_SIZE = 30;
 
 /**
  * Creates a status against the pull request
@@ -29,20 +31,24 @@ async function createStatus(gitHubClient, status) {
 
 async function listPullRequestFiles(gitHubClient) {
   const pullRequestFiles = [];
-  let keepSearching = true;
+  const numberOfChangedFiles = github!.context!.payload!.pull_request!.changed_files;
+  const numberOfPages = _.ceil(numberOfChangedFiles / PAGE_SIZE);
   let page = 0;
   do {
-    const listedFiles = gitHubClient.pulls.listFiles(
+    const listedFiles = await gitHubClient.pulls.listFiles(
       Object.assign(
         Object.assign({}, github.context.repo),
         {
-          per_page: 100,
+          per_page: PAGE_SIZE,
           page: page
         }
       )
     );
+    _.concat(pullRequestFiles, _.map(listedFiles.data, 'filename'));
     page++;
-  } while (keepSearching)
+  } while (page < numberOfPages)
+  core.info(JSON.stringify(pullRequestFiles));
+  return pullRequestFiles;
 }
 
 /**
@@ -54,6 +60,7 @@ async function listPullRequestFiles(gitHubClient) {
  */
 export async function validateCodeowners(gitHubClient, githubToken) {
   const codeOwnersApi = new Codeowner(github.context.repo, {type: 'token', token: githubToken});
+  const pullRequestFiles = await listPullRequestFiles(gitHubClient);
   /*
   if (!codeOwnersApi) {
     createStatus(gitHubClient, States.failure);
