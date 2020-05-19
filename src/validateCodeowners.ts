@@ -39,6 +39,7 @@ async function listPullRequestFiles(gitHubClient) {
       Object.assign(
         Object.assign({}, github.context.repo),
         {
+          pull_number: github!.context!.payload!.pull_request!.number,
           per_page: PAGE_SIZE,
           page: page
         }
