@@ -41,7 +41,7 @@ async function run() {
   }
 
   if (_.hasIn(config , 'checks.codeowner.enforce-multiple') && _.get(config, 'checks.codeowner.enforce-multiple')) {
-    validateCodeowners(gitHubClient);
+    validateCodeowners(gitHubClient, github_token);
   }
 }
 
