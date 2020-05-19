@@ -1,65 +1,63 @@
+import * as github from '@actions/github';
+ import {Codeowner} from 'codeowners-api';
+import { States } from "./statusStates";
 import * as _ from 'lodash';
 
-const FILE_NAME = 'CODEOWNERS';
-const FILE_LOCATIONS = ['.github', '/', 'docs'];
+const STATUS_NAME = 'pull-request-utility/codeowners/enforce';
 
 /**
- * Retrieves the CODEOWNERS file from the default branch
+ * Creates a status against the pull request
  *
- * @param {object} gitHubClient An authenticated GitHub context
- * @param {object} params Params to fetch the file with
- * @returns {Promise<object>} The parsed Codeowners file
+ * @param {object} gitHubClient Authenticated GitHub client
+ * @param {String} status state status
  * @async
  */
-async function retrieveFile(gitHubClient, params) {
-  try {
-    const response = await gitHubClient.repos.getContents(params);
-
-    if (typeof response.data.content !== 'string') {
-      return null;
-    }
-    return Buffer.from(response.data.content, 'base64').toString();
-  } catch (e) {
-    if (e.status === 404) {
-      return null;
-    }
-
-    throw e;
+async function createStatus(gitHubClient, status) {
+  if (github!.context!.payload!.pull_request!.head!.sha) {
+    gitHubClient.repos.createStatus(
+      Object.assign(
+        Object.assign({}, github.context.repo),
+        {
+          sha: pullRequestSha,
+          state: status,
+          context: STATUS_NAME
+        }
+      )
+    );
   }
 }
 
-/**
- * Finds and retrieves the CODEOWNERS files from the default branch of the repository
- *
- * @param {object} gitHubClient Authenticated GitHub client
- * @returns {String} contents of the CODEOWNERS file
- * @async
- */
-
-async function findAndRetrieveCodeowners(gitHubClient) {
- const codeownersContents = (await retrieveFile(gitHubClient, '.github/') || await retrieveFile(gitHubClient, '/')
-                              || await retrieveFile(gitHubClient, 'docs/'))
- if (!codeownersContents) {
-   throw new Error('CODEOWNERS not found in the default branch of the repository.');
- }
-
- return codeownersContents;
+async function listPullRequestFiles(gitHubClient) {
+  const pullRequestFiles = [];
+  let keepSearching = true;
+  let page = 0;
+  do {
+    const listedFiles = gitHubClient.pulls.listFiles({
+      Object.assign(
+        Object.assign({}, github.context.repo),
+        {
+          per_page: 100,
+          page: page
+        }
+      )
+    });
+    page++;
+    if ()
+  } while (keepSearching)
 }
 
 /**
- * Tests if the Pull Request title is valid, against the configuration provided
+ * Tests required approvers from the CODEOWNERS file have approved the pull request
  *
- * @param {String} title Title of the Pull Request
- * @param {object} matches List of regexs to test the title
- * @returns {boolean} Whether the title is valid or not
+ * @param {object} gitHubClient Authenticated GitHub client
+ * @param {String} githubToken github_token input required for codeowners-api
  * @async
  */
-export async function validateCodeowners(title, matches) {
-  let titleValidated = false;
-  _.forEach(matches, function(titleValidation) {
-    if (title.match(new RegExp(titleValidation, 'g'))) {
-      titleValidated = true;
-    }
-  });
-  return titleValidated;
+export async function validateCodeowners(gitHubClient, githubToken) {
+  const codeOwnersApi = new Codeowner(github.context.repo, {type: 'token', token: githubToken});
+  if (!content) {
+    createStatus(gitHubClient, States.failure);
+    return;
+  }
+  let isCodeownerValidated = false;
 }
