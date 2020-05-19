@@ -30,7 +30,7 @@ async function createStatus(gitHubClient, status) {
 }
 
 async function listPullRequestFiles(gitHubClient) {
-  const pullRequestFiles = [];
+  let pullRequestFiles = [];
   const numberOfChangedFiles = github!.context!.payload!.pull_request!.changed_files;
   const numberOfPages = _.ceil(numberOfChangedFiles / PAGE_SIZE);
   let page = 0;
