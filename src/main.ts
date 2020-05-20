@@ -41,9 +41,13 @@ async function run() {
     }
   }
 
-  const codeownerCheckType = shouldCheckTitle || github!.context!.payload!.pull_request_review;
+  const shouldCheckCodeowner = shouldCheckTitle || github!.context!.payload!.pull_request_review;
+  core.info('shouldCheckTitle: ' + shouldCheckTitle);
+  core.info('shouldCheckCodeowner: ' + shouldCheckCodeowner);
+  core.info('pull_request_review: ' + github!.context!.payload!.pull_request_review);
   const codeownerConfigSet = _.hasIn(config , 'checks.codeowner.enforce-multiple') && _.get(config, 'checks.codeowner.enforce-multiple');
-  if (codeownerConfigSet && codeownerCheckType) {
+  if (codeownerConfigSet && shouldCheckCodeowner) {
+    core.info('inside validate codeowners');
     validateCodeowners(gitHubClient, github_token);
   }
 }
