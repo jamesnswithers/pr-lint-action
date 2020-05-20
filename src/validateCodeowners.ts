@@ -2,10 +2,11 @@ import * as _ from 'lodash';
 import * as github from '@actions/github';
 import * as core from '@actions/core';
 import {Codeowner} from 'codeowners-api';
-import { States } from "./statusStates";
+import { StatusStates } from "./statusStates";
+import { ReviewStates } from "./reviewStates";
 
 const STATUS_NAME = 'pull-request-utility/codeowners/enforce';
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 30;
 
 /**
  * Creates a status against the pull request
@@ -29,6 +30,13 @@ async function createStatus(gitHubClient, status) {
   }
 }
 
+/**
+ * Lists files that are in the pull request
+ *
+ * @param {object} gitHubClient Authenticated GitHub client
+ * @returns {Array} List of files that have been changed
+ * @async
+ */
 async function listPullRequestFiles(gitHubClient) {
   let pullRequestFiles = [];
   const numberOfChangedFiles = github!.context!.payload!.pull_request!.changed_files;
@@ -53,6 +61,37 @@ async function listPullRequestFiles(gitHubClient) {
 }
 
 /**
+ * Lists approvers that have approved the pull request
+ *
+ * @param {object} gitHubClient Authenticated GitHub client
+ * @returns {Array} List of approved reviewers usernames
+ * @async
+ */
+async function listApprovedReviewers(gitHubClient) {
+  let pullRequestApprovers = [];
+  let moreReviewers = true;
+  let page = 0;
+  do {
+    const listedReviewers = await gitHubClient.pulls.listReviews(
+      Object.assign(
+        Object.assign({}, github.context.repo),
+        {
+          pull_number: github!.context!.payload!.pull_request!.number,
+          per_page: PAGE_SIZE,
+          page: page
+        }
+      )
+    );
+    const additionalApprovers = _.map(_.filter(listedReviewers.data, ['state', ReviewStates.approved]), 'user.login');
+    pullRequestApprovers = _.concat(pullRequestApprovers, additionalApprovers);
+    moreReviewers = _.size(additionalApprovers) == PAGE_SIZE;
+    page++;
+  } while (moreReviewers)
+  core.info(JSON.stringify(pullRequestApprovers));
+  return pullRequestApprovers;
+}
+
+/**
  * Tests required approvers from the CODEOWNERS file have approved the pull request
  *
  * @param {object} gitHubClient Authenticated GitHub client
@@ -62,9 +101,10 @@ async function listPullRequestFiles(gitHubClient) {
 export async function validateCodeowners(gitHubClient, githubToken) {
   const codeOwnersApi = new Codeowner(github.context.repo, {type: 'token', token: githubToken});
   const pullRequestFiles = await listPullRequestFiles(gitHubClient);
+  const pullRequestApprovers = await listApprovedReviewers(gitHubClient);
   /*
   if (!codeOwnersApi) {
-    createStatus(gitHubClient, States.failure);
+    createStatus(gitHubClient, StatusStates.failure);
     return;
   }
   let isCodeownerValidated = false;
