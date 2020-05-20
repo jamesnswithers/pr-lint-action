@@ -6,6 +6,7 @@ import { StatusStates } from "./statusStates";
 import { isTitleValid } from "./validateTitle";
 import { validateCodeowners } from "./validateCodeowners";
 
+const eventTypes = ['pull_request', 'pull_request_review'];
 const actionsToCheckTitle = ['opened', 'reopened', 'edited', 'synchronized'];
 
 async function run() {
@@ -13,15 +14,18 @@ async function run() {
   const gitHubClient = new github.GitHub(github_token);
   const config = await getConfig(gitHubClient);
   const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha;
-  const payload = github!.context!.payload;
+  const context = github!.context;
+  const payload = context!.payload;
   const action = payload!.action || '';
 
-  if (!_.hasIn(payload , 'pull_request') && !_.hasIn(payload , 'pull_request_review')) {
+  if (!_.hasIn(eventTypes , context.eventName)) {
     core.info('The payload type is not one of pull_request or pull_request_review. Exiting early.');
     return;
   }
+  core.info('The event type is: ' + context.eventName);
+  core.info('The action is: ' + action);
 
-  const shouldCheckTitle = actionsToCheckTitle.includes(action);
+  const shouldCheckTitle = _.hasIn(actionsToCheckTitle, action);
   const shouldCheckCodeowner = shouldCheckTitle || _.hasIn(payload , 'pull_request_review');
 
   if (_.hasIn(config , 'checks.title-validator')) {
