@@ -11,10 +11,11 @@ async function run() {
   const gitHubClient = new github.GitHub(github_token);
   const config = await getConfig(gitHubClient);
   const pullRequestSha = github!.context!.payload!.pull_request!.head!.sha;
+  const payload = github!.context!.payload;
 
-  //core.info(JSON.stringify(github));
-  const shouldCheckTitle = github!.context!.payload!.pull_request!.opened || github!.context!.payload!.pull_request!.reopened
-                           || github!.context!.payload!.pull_request!.edited || github!.context!.payload!.pull_request!.synchronized;
+  core.info(JSON.stringify(github!.context!.payload));
+  const shouldCheckTitle = _.hasIn(payload , 'pull_request.opened') || _.hasIn(payload , 'pull_request.reopened') || _.hasIn(payload , 'pull_request.edited')
+                           || _.hasIn(payload , 'pull_request.synchronized');
   if (_.hasIn(config , 'checks.title-validator')) {
     const pullRequestTitle = github!.context!.payload!.pull_request!.title;
     const titleCheckState = await isTitleValid(pullRequestTitle, _.get(config, 'checks.title-validator.matches'));
@@ -41,7 +42,7 @@ async function run() {
     }
   }
 
-  const shouldCheckCodeowner = shouldCheckTitle || github!.context!.payload!.pull_request_review;
+  const shouldCheckCodeowner = shouldCheckTitle || _.hasIn(payload , 'pull_request_review');
   core.info('shouldCheckTitle: ' + shouldCheckTitle);
   core.info('shouldCheckCodeowner: ' + shouldCheckCodeowner);
   core.info('pull_request_review: ' + github!.context!.payload!.pull_request_review);
