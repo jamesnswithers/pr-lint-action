@@ -5,7 +5,7 @@ import {Codeowner} from 'codeowners-api';
 import { States } from "./statusStates";
 
 const STATUS_NAME = 'pull-request-utility/codeowners/enforce';
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 1;
 
 /**
  * Creates a status against the pull request
