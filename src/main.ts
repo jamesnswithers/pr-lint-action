@@ -7,7 +7,7 @@ import { isTitleValid } from "./validateTitle";
 import { validateCodeowners } from "./validateCodeowners";
 
 const eventTypes = ['pull_request', 'pull_request_review'];
-const actionsToCheckTitle = ['opened', 'reopened', 'edited', 'synchronized'];
+const actionsToCheckTitle = ['opened', 'reopened', 'edited', 'synchronize'];
 
 async function run() {
   const github_token = core.getInput('github-token', { required: true });
