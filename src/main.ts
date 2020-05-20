@@ -18,15 +18,15 @@ async function run() {
   const payload = context!.payload;
   const action = payload!.action || '';
 
-  if (!_.hasIn(eventTypes , context.eventName)) {
+  core.info('The event type is: ' + context.eventName);
+  if (!_.has(eventTypes , context.eventName)) {
     core.info('The payload type is not one of pull_request or pull_request_review. Exiting early.');
     return;
   }
-  core.info('The event type is: ' + context.eventName);
   core.info('The action is: ' + action);
 
-  const shouldCheckTitle = _.hasIn(actionsToCheckTitle, action);
-  const shouldCheckCodeowner = shouldCheckTitle || _.hasIn(payload , 'pull_request_review');
+  const shouldCheckTitle = _.has(actionsToCheckTitle, action);
+  const shouldCheckCodeowner = shouldCheckTitle || _.has(payload , 'pull_request_review');
 
   if (_.hasIn(config , 'checks.title-validator')) {
     const pullRequestTitle = payload!.pull_request!.title;
