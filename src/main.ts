@@ -16,7 +16,7 @@ async function run() {
   const payload = github!.context!.payload;
   const action = payload!.action || '';
 
-  if (_.hasIn(payload , 'pull_request') || _.hasIn(payload , 'pull_request_review')) {
+  if (!_.hasIn(payload , 'pull_request') && !_.hasIn(payload , 'pull_request_review')) {
     core.info('The payload type is not one of pull_request or pull_request_review. Exiting early.');
     return;
   }
