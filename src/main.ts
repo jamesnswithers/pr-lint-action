@@ -18,6 +18,8 @@ async function run() {
   const payload = context!.payload;
   const action = payload!.action || '';
 
+  core.info(JSON.stringify(github));
+  core.info(JSON.stringify(context));
   core.info('The event type is: ' + context.eventName);
   if (!_.includes(eventTypes , context.eventName)) {
     core.info('The payload type is not one of pull_request or pull_request_review. Exiting early.');

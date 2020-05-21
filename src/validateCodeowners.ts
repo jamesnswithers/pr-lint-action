@@ -83,7 +83,6 @@ async function listApprovedReviewers(gitHubClient) {
       )
     );
     core.info(JSON.stringify(listedReviewers.data));
-    core.info(JSON.stringify(listedReviewers.data));
     core.info(JSON.stringify(_.filter(listedReviewers.data, ['state', ReviewStates.approved])));
     core.info(JSON.stringify(_.filter(listedReviewers.data, ['state', ReviewStates.pending])));
     const additionalApprovers = _.map(_.filter(listedReviewers.data, ['state', ReviewStates.approved]), 'user.login');
