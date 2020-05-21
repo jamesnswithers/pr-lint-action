@@ -82,7 +82,11 @@ async function listApprovedReviewers(gitHubClient) {
         }
       )
     );
+    core.info(listedReviewers.data);
+    core.info(_.filter(listedReviewers.data, ['state', ReviewStates.approved]));
+    core.info(_.filter(listedReviewers.data, ['state', ReviewStates.pending]));
     const additionalApprovers = _.map(_.filter(listedReviewers.data, ['state', ReviewStates.approved]), 'user.login');
+    core.info(additionalApprovers);
     pullRequestApprovers = _.concat(pullRequestApprovers, additionalApprovers);
     moreReviewers = _.size(additionalApprovers) == PAGE_SIZE;
     page++;
